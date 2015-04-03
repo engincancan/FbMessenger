@@ -12,7 +12,7 @@
                 <param name="android-package" value="org.engin.test.fbmessenger.FbMessenger"/>
             </feature>
         </config-file>
-
+        <lib-file src="src/android/lib/facebook.v4.jar" arch="device" />
         <source-file src="src/android/FbMessenger.java" target-dir="src/org/engin/test/fbmessenger" />
     </platform>
 </plugin>

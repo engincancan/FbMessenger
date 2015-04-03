@@ -1,6 +1,11 @@
-package org.engin.test.FbMessenger;
+package org.engin.test.fbmessenger;
 
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.List;
+import java.util.Locale;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.json.JSONArray;
@@ -8,9 +13,8 @@ import org.json.JSONException;
 import com.facebook.messenger.MessengerUtils;
 import com.facebook.messenger.MessengerThreadParams;
 import com.facebook.messenger.ShareToMessengerParams;
-
-
-import android.provider.Settings;
+import android.app.Activity;
+import android.content.Intent;
 
 public class FbMessenger extends CordovaPlugin {
     public static final String TAG = "FbMessenger";
@@ -24,17 +28,17 @@ public class FbMessenger extends CordovaPlugin {
 
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         if (action.equals("shareMethod")) {
+            Activity activity = this.cordova.getActivity();
             ShareToMessengerParams shareToMessengerParams =
-            ShareToMessengerParams.newBuilder(contentUri, "image/jpeg")
+            ShareToMessengerParams.newBuilder(activity.getIntent().getData(), "image/jpeg")
             .setMetaData("{ \"image\" : \"trees\" }")
             .build();
-
             if (mPicking) {
-                MessengerUtils.finishShareToMessenger(this, shareToMessengerParams);
+                MessengerUtils.finishShareToMessenger(activity, shareToMessengerParams);
             } else {  
                 MessengerUtils.shareToMessenger(
-                    this,
-                    REQUEST_CODE_SHARE_TO_MESSENGER,
+                        activity,
+                    SHARE_TO_MESSENGER_REQUEST_CODE,
                     shareToMessengerParams);
             }
         }
@@ -62,6 +66,91 @@ public class FbMessenger extends CordovaPlugin {
 
 
         }
+    }
+    
+    // Taken from commons StringEscapeUtils
+    private static void escapeJavaStyleString(Writer out, String str, boolean escapeSingleQuote,
+                                              boolean escapeForwardSlash) throws IOException {
+      if (out == null) {
+        throw new IllegalArgumentException("The Writer must not be null");
+      }
+      if (str == null) {
+        return;
+      }
+      int sz;
+      sz = str.length();
+      for (int i = 0; i < sz; i++) {
+        char ch = str.charAt(i);
+
+        // handle unicode
+        if (ch > 0xfff) {
+          out.write("\\u" + hex(ch));
+        } else if (ch > 0xff) {
+          out.write("\\u0" + hex(ch));
+        } else if (ch > 0x7f) {
+          out.write("\\u00" + hex(ch));
+        } else if (ch < 32) {
+          switch (ch) {
+            case '\b':
+              out.write('\\');
+              out.write('b');
+              break;
+            case '\n':
+              out.write('\\');
+              out.write('n');
+              break;
+            case '\t':
+              out.write('\\');
+              out.write('t');
+              break;
+            case '\f':
+              out.write('\\');
+              out.write('f');
+              break;
+            case '\r':
+              out.write('\\');
+              out.write('r');
+              break;
+            default:
+              if (ch > 0xf) {
+                out.write("\\u00" + hex(ch));
+              } else {
+                out.write("\\u000" + hex(ch));
+              }
+              break;
+          }
+        } else {
+          switch (ch) {
+            case '\'':
+              if (escapeSingleQuote) {
+                out.write('\\');
+              }
+              out.write('\'');
+              break;
+            case '"':
+              out.write('\\');
+              out.write('"');
+              break;
+            case '\\':
+              out.write('\\');
+              out.write('\\');
+              break;
+            case '/':
+              if (escapeForwardSlash) {
+                out.write('\\');
+              }
+              out.write('/');
+              break;
+            default:
+              out.write(ch);
+              break;
+          }
+        }
+      }
+    }
+
+    private static String hex(char ch) {
+      return Integer.toHexString(ch).toUpperCase(Locale.ENGLISH);
     }
 
 
