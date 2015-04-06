@@ -31,8 +31,7 @@ public class FbMessenger extends CordovaPlugin {
     private static final String EXTRA_PROTOCOL_VERSION = "com.facebook.orca.extra.PROTOCOL_VERSION";
     private static final String EXTRA_APP_ID = "com.facebook.orca.extra.APPLICATION_ID";
     private static final int PROTOCOL_VERSION = 20150314;
-    private static final String YOUR_APP_ID = "409348325746384";
-    //private static final String YOUR_APP_ID = "[YOUR_FACEBOOK_APP_ID]";
+    private static final String YOUR_APP_ID = "[YOUR_FACEBOOK_APP_ID]";
     private static final int SHARE_TO_MESSENGER_REQUEST_CODE = 1;
 
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
