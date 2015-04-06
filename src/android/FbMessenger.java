@@ -6,15 +6,23 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.List;
 import java.util.Locale;
+
 import org.apache.cordova.CallbackContext;
+import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.CordovaWebView;
 import org.json.JSONArray;
 import org.json.JSONException;
+
+import com.facebook.FacebookSdk;
 import com.facebook.messenger.MessengerUtils;
 import com.facebook.messenger.MessengerThreadParams;
 import com.facebook.messenger.ShareToMessengerParams;
+import com.ionicframework.testmessenger191211.R;
+
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 
 public class FbMessenger extends CordovaPlugin {
     public static final String TAG = "FbMessenger";
@@ -23,14 +31,22 @@ public class FbMessenger extends CordovaPlugin {
     private static final String EXTRA_PROTOCOL_VERSION = "com.facebook.orca.extra.PROTOCOL_VERSION";
     private static final String EXTRA_APP_ID = "com.facebook.orca.extra.APPLICATION_ID";
     private static final int PROTOCOL_VERSION = 20150314;
-    private static final String YOUR_APP_ID = "[YOUR_FACEBOOK_APP_ID]";
+    private static final String YOUR_APP_ID = "409348325746384";
+    //private static final String YOUR_APP_ID = "[YOUR_FACEBOOK_APP_ID]";
     private static final int SHARE_TO_MESSENGER_REQUEST_CODE = 1;
 
+    public void initialize(CordovaInterface cordova, CordovaWebView webView) {
+      if(!FacebookSdk.isInitialized()){
+          FacebookSdk.sdkInitialize(this.cordova.getActivity());
+        }
+    }
+    
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         if (action.equals("shareMethod")) {
             Activity activity = this.cordova.getActivity();
+            Uri uri = Uri.parse("android.resource://"+activity.getPackageName() +"/"+ R.drawable.tree);
             ShareToMessengerParams shareToMessengerParams =
-            ShareToMessengerParams.newBuilder(activity.getIntent().getData(), "image/jpeg")
+            ShareToMessengerParams.newBuilder(uri, "image/jpeg")
             .setMetaData("{ \"image\" : \"trees\" }")
             .build();
             if (mPicking) {
