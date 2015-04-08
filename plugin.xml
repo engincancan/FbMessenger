@@ -12,6 +12,20 @@
                 <param name="android-package" value="org.engin.test.fbmessenger.FbMessenger"/>
             </feature>
         </config-file>
+    <config-file target="AndroidManifest.xml" parent="/*/application/activity">
+      <intent-filter>
+                <action android:name="android.intent.action.PICK" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="com.facebook.orca.category.PLATFORM_THREAD_20150314" />
+      </intent-filter>
+    </config-file>
+    <config-file target="AndroidManifest.xml" parent="/*/application">
+      <meta-data android:name="com.facebook.sdk.ApplicationId"  android:value="@string/facebook_app_id" />
+    </config-file>
+    <config-file target="res/values/strings.xml" parent="/*/resources">
+      <string name="facebook_app_id">$FB_ID</string>
+    </config-file>
+    
         <lib-file src="src/android/lib/android-support-v4.jar" arch="device" />
         <lib-file src="src/android/lib/bolts-android-1.1.4.jar" arch="device" />
         <lib-file src="src/android/lib/facebook-debug.jar" arch="device" />
